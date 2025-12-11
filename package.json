@@ -8,7 +8,7 @@
     "lint": "eslint src",
     "lint-fix": "eslint --fix src",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "watch": "webpack --watch",
+    "watch": "NODE_OPTIONS=--openssl-legacy-provider webpack --watch",
     "watch-firefox": "web-ext run --source-dir ./dist -f /Applications/Firefox.app/Contents/MacOS/firefox"
   },
   "repository": {
@@ -52,6 +52,9 @@
     "webpack-cli": "^3.3.12"
   },
   "engines": {
-    "node": "16"
-  }
+    "node": "18"
+  },
+  "browserslist": [
+    "defaults"
+  ]
 }
