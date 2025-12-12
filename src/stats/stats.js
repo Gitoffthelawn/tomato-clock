@@ -101,7 +101,7 @@ export default class Stats {
 
     try {
       newTimeline = JSON.parse(timelineJson);
-    } catch (e) {
+    } catch {
       alert("Invalid JSON");
       return;
     }
