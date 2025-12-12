@@ -1,5 +1,5 @@
 const path = require("path");
-const CleanWebpackPlugin = require("clean-webpack-plugin");
+
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
 
@@ -16,6 +16,7 @@ module.exports = {
   output: {
     path: path.resolve(__dirname, "dist"),
     filename: "[name]/[name].js",
+    clean: true,
   },
   devtool: "source-map",
   module: {
@@ -45,7 +46,7 @@ module.exports = {
     ],
   },
   plugins: [
-    new CleanWebpackPlugin(["dist"]),
+
     new HtmlWebpackPlugin({
       title: "Panel - Tomato Clock",
       template: "src/panel/panel.html",
@@ -71,7 +72,7 @@ module.exports = {
           from: "./src/manifest.json",
           to: "./manifest.json",
           transform: (content) => {
-            const jsonContent = JSON.parse(content);
+            const jsonContent = JSON.parse(content.toString());
             jsonContent.version = version;
             return JSON.stringify(jsonContent, null, 2);
           },
