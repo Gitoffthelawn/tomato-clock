@@ -46,7 +46,6 @@ module.exports = {
     ],
   },
   plugins: [
-
     new HtmlWebpackPlugin({
       title: "Panel - Tomato Clock",
       template: "src/panel/panel.html",

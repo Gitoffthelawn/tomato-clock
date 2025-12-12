@@ -10,16 +10,16 @@ export default class Options {
 
     this.domMinutesInTomato = document.getElementById("minutes-in-tomato");
     this.domMinutesInShortBreak = document.getElementById(
-      "minutes-in-short-break"
+      "minutes-in-short-break",
     );
     this.domMinutesInLongBreak = document.getElementById(
-      "minutes-in-long-break"
+      "minutes-in-long-break",
     );
     this.domNotificationSoundCheckbox = document.getElementById(
-      "notification-sound-checkbox"
+      "notification-sound-checkbox",
     );
     this.domToolbarBadgeCheckbox = document.getElementById(
-      "toolbar-badge-checkbox"
+      "toolbar-badge-checkbox",
     );
 
     this.setOptionsOnPage();
@@ -48,8 +48,8 @@ export default class Options {
     const minutesInTomato = parseInt(this.domMinutesInTomato.value);
     const minutesInShortBreak = parseInt(this.domMinutesInShortBreak.value);
     const minutesInLongBreak = parseInt(this.domMinutesInLongBreak.value);
-    const isNotificationSoundEnabled = this.domNotificationSoundCheckbox
-      .checked;
+    const isNotificationSoundEnabled =
+      this.domNotificationSoundCheckbox.checked;
     const isToolbarBadgeEnabled = this.domToolbarBadgeCheckbox.checked;
 
     this.settings.saveSettings({

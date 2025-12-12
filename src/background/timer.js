@@ -66,11 +66,10 @@ export default class Timer {
             this.timeline.addAlarmToTimeline(timer.type, timer.totalTime);
             this.resetTimer();
           } else {
-            const minutesLeft = getMillisecondsToMinutesAndSeconds(
-              timeLeft
-            ).minutes.toString();
-            const secondsLeft = getMillisecondsToMinutesAndSeconds(timeLeft)
-              .seconds;
+            const minutesLeft =
+              getMillisecondsToMinutesAndSeconds(timeLeft).minutes.toString();
+            const secondsLeft =
+              getMillisecondsToMinutesAndSeconds(timeLeft).seconds;
 
             if (this.badge.getBadgeText() !== minutesLeft) {
               if (minutesLeft === "0" && secondsLeft < 60)

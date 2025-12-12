@@ -13,14 +13,14 @@ export default class Timeline {
 
   async _getLocalTimeline() {
     const localStorageResults = await browser.storage.local.get(
-      STORAGE_KEY.TIMELINE
+      STORAGE_KEY.TIMELINE,
     );
     return localStorageResults[STORAGE_KEY.TIMELINE];
   }
 
   async _getSyncTimeline() {
     const syncStorageResults = await browser.storage.sync.get(
-      STORAGE_KEY.TIMELINE
+      STORAGE_KEY.TIMELINE,
     );
     return syncStorageResults[STORAGE_KEY.TIMELINE];
   }
@@ -53,7 +53,7 @@ export default class Timeline {
     } else if (syncTimeline && localTimeline) {
       const mergedAndDedupedTimeline = getMergedAndDedupedArray(
         syncTimeline,
-        localTimeline
+        localTimeline,
       );
       await this._setLocalTimeline(mergedAndDedupedTimeline);
       await this._removeSyncTimelineIfLocalIsExpected(mergedAndDedupedTimeline);

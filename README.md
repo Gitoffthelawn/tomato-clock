@@ -81,8 +81,16 @@ The expected formatting of Tomato Clock's .json files is as follows
 ```json
 [
   { "timeout": 1500000, "type": "tomato", "date": "2020-08-29T18:07:55.895Z" },
-  { "timeout": 300000, "type": "shortBreak", "date": "2022-04-13T04:13:37.406Z" },
-  { "timeout": 900000, "type": "longBreak", "date": "2022-04-13T04:13:40.030Z" },
+  {
+    "timeout": 300000,
+    "type": "shortBreak",
+    "date": "2022-04-13T04:13:37.406Z"
+  },
+  {
+    "timeout": 900000,
+    "type": "longBreak",
+    "date": "2022-04-13T04:13:40.030Z"
+  },
   { "timeout": 1500000, "type": "tomato", "date": "2022-04-13T04:13:45.182Z" }
 ]
 ```

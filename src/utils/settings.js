@@ -13,7 +13,7 @@ export default class Settings {
         const settings = Object.assign(
           {},
           DEFAULT_SETTINGS,
-          storageResults[STORAGE_KEY.SETTINGS]
+          storageResults[STORAGE_KEY.SETTINGS],
         );
 
         resolve(settings);

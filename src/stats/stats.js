@@ -26,7 +26,7 @@ export default class Stats {
     this.exportStatsButton = document.getElementById("export-stats-button");
     this.importStatsButton = document.getElementById("import-stats-button");
     this.importStatsHiddenInput = document.getElementById(
-      "import-stats-hidden-input"
+      "import-stats-hidden-input",
     );
 
     this.ctx = document
@@ -34,33 +34,29 @@ export default class Stats {
       .getContext("2d");
     this.completedTomatoesChart = null;
 
-    this.handleResetStatsButtonClick = this.handleResetStatsButtonClick.bind(
-      this
-    );
-    this.handleExportStatsButtonClick = this.handleExportStatsButtonClick.bind(
-      this
-    );
-    this.handleImportStatsButtonClick = this.handleImportStatsButtonClick.bind(
-      this
-    );
-    this.handleImportStatsHiddenInputChange = this.handleImportStatsHiddenInputChange.bind(
-      this
-    );
+    this.handleResetStatsButtonClick =
+      this.handleResetStatsButtonClick.bind(this);
+    this.handleExportStatsButtonClick =
+      this.handleExportStatsButtonClick.bind(this);
+    this.handleImportStatsButtonClick =
+      this.handleImportStatsButtonClick.bind(this);
+    this.handleImportStatsHiddenInputChange =
+      this.handleImportStatsHiddenInputChange.bind(this);
     this.resetStatsButton.addEventListener(
       "click",
-      this.handleResetStatsButtonClick
+      this.handleResetStatsButtonClick,
     );
     this.exportStatsButton.addEventListener(
       "click",
-      this.handleExportStatsButtonClick
+      this.handleExportStatsButtonClick,
     );
     this.importStatsButton.addEventListener(
       "click",
-      this.handleImportStatsButtonClick
+      this.handleImportStatsButtonClick,
     );
     this.importStatsHiddenInput.addEventListener(
       "change",
-      this.handleImportStatsHiddenInputChange
+      this.handleImportStatsHiddenInputChange,
     );
 
     this.timeline = new Timeline();
@@ -135,12 +131,12 @@ export default class Stats {
   async changeStatDates(startDate, endDate, dateUnit) {
     const filteredTimeline = await this.timeline.getFilteredTimeline(
       startDate,
-      endDate
+      endDate,
     );
     const dateRangeStrings = getDateRangeStringArray(
       startDate,
       endDate,
-      dateUnit
+      dateUnit,
     );
 
     const completedTomatoesChartData = {
@@ -172,7 +168,7 @@ export default class Stats {
           this.addTomatoDateToChartData(
             completedTomatoesChartData,
             timelineAlarm.date,
-            dateUnit
+            dateUnit,
           );
           break;
         case TIMER_TYPE.SHORT_BREAK:
@@ -268,6 +264,6 @@ $(document).ready(() => {
       const dateUnit = isRangeYear ? DATE_UNIT.MONTH : DATE_UNIT.DAY;
 
       stats.changeStatDates(startDate, endDate, dateUnit);
-    }
+    },
   );
 });
