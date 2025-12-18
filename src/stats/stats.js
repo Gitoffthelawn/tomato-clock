@@ -1,5 +1,5 @@
 import $ from "jquery";
-import Chart from "chart.js";
+import Chart from "chart.js/auto";
 import moment from "moment";
 import "daterangepicker";
 
@@ -186,30 +186,30 @@ export default class Stats {
 
     // Setup 'Completed Tomatoes' Line Chart
     if (this.completedTomatoesChart) {
-      this.completedTomatoesChart.config.data = completedTomatoesChartData;
+      this.completedTomatoesChart.data = completedTomatoesChartData;
       this.completedTomatoesChart.update();
     } else {
       this.completedTomatoesChart = new Chart(this.ctx, {
         type: "line",
         data: completedTomatoesChartData,
         options: {
-          tooltips: {
-            intersect: false,
-            mode: "nearest",
+          plugins: {
+            tooltip: {
+              intersect: false,
+              mode: "nearest",
+            },
+            legend: {
+              position: "bottom",
+            },
           },
           scales: {
-            yAxes: [
-              {
-                ticks: {
-                  maxTicksLimit: 5,
-                  suggestedMax: 5,
-                  beginAtZero: true,
-                },
+            y: {
+              beginAtZero: true,
+              suggestedMax: 5,
+              ticks: {
+                maxTicksLimit: 5,
               },
-            ],
-          },
-          legend: {
-            position: "bottom",
+            },
           },
         },
       });
@@ -218,7 +218,6 @@ export default class Stats {
 }
 
 $(document).ready(() => {
-  Chart.defaults.global.responsive = true;
   const stats = new Stats();
 
   // Date Picker
