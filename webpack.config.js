@@ -12,6 +12,7 @@ module.exports = {
     panel: "./src/panel/panel.js",
     stats: "./src/stats/stats.js",
     options: "./src/options/options.js",
+    offscreen: "./src/offscreen/offscreen.js",
   },
   output: {
     path: path.resolve(__dirname, "dist"),
@@ -64,6 +65,12 @@ module.exports = {
       filename: "options/options.html",
       chunks: ["options"],
     }),
+    new HtmlWebpackPlugin({
+      title: "Offscreen - Tomato Clock",
+      template: "src/offscreen/offscreen.html",
+      filename: "offscreen/offscreen.html",
+      chunks: ["offscreen"],
+    }),
 
     new CopyWebpackPlugin({
       patterns: [
@@ -73,6 +80,31 @@ module.exports = {
           transform: (content) => {
             const jsonContent = JSON.parse(content.toString());
             jsonContent.version = version;
+
+            const permissions = ["notifications", "storage", "alarms"];
+
+            switch (process.env.TARGET_BROWSER) {
+              case "chrome":
+                jsonContent.background = {
+                  service_worker: "background/background.js",
+                };
+                jsonContent.permissions = [...permissions, "offscreen"];
+                break;
+              default:
+                // Default is Firefox
+                jsonContent.background = {
+                  scripts: ["background/background.js"],
+                };
+                jsonContent.browser_specific_settings = {
+                  gecko: {
+                    id: "jid1-Kt2kYYgi32zPuw@jetpack",
+                    strict_min_version: "109.0",
+                  },
+                };
+                jsonContent.permissions = permissions;
+                break;
+            }
+
             return JSON.stringify(jsonContent, null, 2);
           },
         },

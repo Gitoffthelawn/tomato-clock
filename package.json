@@ -9,7 +9,11 @@
     "lint-fix": "eslint --fix src",
     "test": "echo \"Error: no test specified\" && exit 1",
     "watch": "webpack --watch",
-    "watch-firefox": "web-ext run --source-dir ./dist -f /Applications/Firefox.app/Contents/MacOS/firefox"
+    "start": "web-ext run --source-dir ./dist -f /Applications/Firefox.app/Contents/MacOS/firefox",
+    "watch:firefox": "npm run watch",
+    "start:firefox": "npm run start",
+    "watch:chrome": "TARGET_BROWSER=chrome webpack --watch",
+    "start:chrome": "web-ext run -t chromium --source-dir ./dist"
   },
   "repository": {
     "type": "git",

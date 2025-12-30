@@ -6,13 +6,13 @@ import Notifications from "./notifications";
 import Timeline from "../utils/timeline";
 import {
   getMillisecondsToMinutesAndSeconds,
-  getSecondsInMilliseconds,
   getTimerTypeMilliseconds,
 } from "../utils/utils";
 import {
   RUNTIME_ACTION,
   TIMER_TYPE,
   BADGE_BACKGROUND_COLOR_BY_TIMER_TYPE,
+  STORAGE_KEY,
 } from "../utils/constants";
 
 export default class Timer {
@@ -24,72 +24,124 @@ export default class Timer {
 
     this.timeline.switchStorageFromSyncToLocal();
 
-    this.timer = {};
-
-    this.resetTimer();
     this.setListeners();
+    this.initAlarms();
   }
 
-  getTimer() {
-    return this.timer;
+  async getTimerState() {
+    const result = await browser.storage.local.get(STORAGE_KEY.TIMER);
+    return (
+      result[STORAGE_KEY.TIMER] || {
+        status: "idle",
+        type: null,
+        scheduledTime: null,
+        totalTime: 0,
+      }
+    );
   }
 
-  resetTimer() {
-    if (this.timer.interval) {
-      clearInterval(this.timer.interval);
-    }
+  async setTimerState(state) {
+    await browser.storage.local.set({ [STORAGE_KEY.TIMER]: state });
+  }
 
-    this.timer = {
-      interval: null,
-      scheduledTime: null,
-      totalTime: 0,
-      type: null,
-    };
+  async clearTimerState() {
+    await browser.storage.local.remove(STORAGE_KEY.TIMER);
+  }
 
+  async resetTimer() {
+    await browser.alarms.clearAll();
+    await this.clearTimerState();
     this.badge.setBadgeText("");
   }
 
   setTimer(type) {
-    this.resetTimer();
-    const badgeBackgroundColor = BADGE_BACKGROUND_COLOR_BY_TIMER_TYPE[type];
+    this.resetTimer().then(() => {
+      const badgeBackgroundColor = BADGE_BACKGROUND_COLOR_BY_TIMER_TYPE[type];
+      this.settings.getSettings().then(async (settings) => {
+        const milliseconds = getTimerTypeMilliseconds(type, settings);
+        const scheduledTime = Date.now() + milliseconds;
 
-    this.settings.getSettings().then((settings) => {
-      const milliseconds = getTimerTypeMilliseconds(type, settings);
+        const state = {
+          status: "running",
+          scheduledTime,
+          totalTime: milliseconds,
+          type,
+        };
 
-      this.timer = {
-        interval: setInterval(() => {
-          const timer = this.getTimer();
-          const timeLeft = timer.scheduledTime - Date.now();
+        await this.setTimerState(state);
+        await browser.alarms.create("timer", { when: scheduledTime });
+        await browser.alarms.create("badge", { periodInMinutes: 1 });
 
-          if (timeLeft <= 0) {
-            this.notifications.createBrowserNotification(timer.type);
-            this.timeline.addAlarmToTimeline(timer.type, timer.totalTime);
-            this.resetTimer();
-          } else {
-            const minutesLeft =
-              getMillisecondsToMinutesAndSeconds(timeLeft).minutes.toString();
-            const secondsLeft =
-              getMillisecondsToMinutesAndSeconds(timeLeft).seconds;
-
-            if (this.badge.getBadgeText() !== minutesLeft) {
-              if (minutesLeft === "0" && secondsLeft < 60)
-                this.badge.setBadgeText("<1", badgeBackgroundColor);
-              else this.badge.setBadgeText(minutesLeft, badgeBackgroundColor);
-            }
-          }
-        }, getSecondsInMilliseconds(1)),
-        scheduledTime: Date.now() + milliseconds,
-        totalTime: milliseconds,
-        type,
-      };
-
-      const { minutes } = getMillisecondsToMinutesAndSeconds(milliseconds);
-      this.badge.setBadgeText(minutes.toString(), badgeBackgroundColor);
+        // Initial badge of timer to match the panel minute digits (e.g. "25" badge to "25:00" panel time)
+        const { minutes } = getMillisecondsToMinutesAndSeconds(milliseconds);
+        this.badge.setBadgeText(minutes.toString(), badgeBackgroundColor);
+        // After 1 second, update badge to different panel minute digits (e.g. "24" badge to "24:59" panel time
+        setTimeout(() => {
+          this.updateBadge();
+        }, 1000);
+      });
     });
   }
 
-  getTimerScheduledTime() {
-    return this.timer.scheduledTime;
+  async updateBadge() {
+    const state = await this.getTimerState();
+    if (state.status !== "running") return;
+
+    const badgeBackgroundColor =
+      BADGE_BACKGROUND_COLOR_BY_TIMER_TYPE[state.type];
+    const timeLeft = state.scheduledTime - Date.now();
+
+    if (timeLeft <= 0) {
+      // Should be handled by 'timer' alarm, but just in case
+      this.badge.setBadgeText("");
+      return;
+    }
+
+    const { minutes, seconds } = getMillisecondsToMinutesAndSeconds(timeLeft);
+    const minutesLeft = minutes.toString();
+    console.log(timeLeft);
+    console.log(minutesLeft);
+    console.log(seconds);
+
+    // Check if we need to update
+    const currentText = await this.badge.getBadgeText();
+    if (currentText !== minutesLeft) {
+      if (minutesLeft === "0" && seconds < 60) {
+        this.badge.setBadgeText("<1", badgeBackgroundColor);
+      } else {
+        this.badge.setBadgeText(minutesLeft, badgeBackgroundColor);
+      }
+    }
+  }
+
+  initAlarms() {
+    browser.alarms.onAlarm.addListener(async (alarm) => {
+      switch (alarm.name) {
+        case "timer": {
+          // const delayInSeconds = (Date.now() - alarm.scheduledTime) / 1000;
+          // console.log(`Alarm delay: ${delayInSeconds} seconds`);
+
+          const state = await this.getTimerState();
+          if (state.status === "running") {
+            this.notifications.createBrowserNotification(state.type);
+            this.timeline.addAlarmToTimeline(state.type, state.totalTime);
+            await this.resetTimer();
+          }
+          break;
+        }
+        case "badge":
+          await this.updateBadge();
+          setTimeout(() => {
+            this.updateBadge();
+          }, 1000);
+          break;
+      }
+    });
+  }
+
+  async getTimerScheduledTime() {
+    const state = await this.getTimerState();
+    return state.scheduledTime;
   }
 
   setListeners() {
@@ -102,12 +154,7 @@ export default class Timer {
           this.setTimer(request.data.type);
           break;
         case RUNTIME_ACTION.GET_TIMER_SCHEDULED_TIME:
-          // Hack because of difference in chrome and firefox
-          // Check if polyfill fixes the issue
-          if (sendResponse) {
-            sendResponse(this.getTimerScheduledTime());
-          }
-          return this.getTimerScheduledTime();
+          return this.getTimerScheduledTime(); // Returns promise
         default:
           break;
       }

@@ -9,6 +9,32 @@ export default class Notifications {
     this.setListeners();
   }
 
+  async playAudio() {
+    // Chrome restricts audio playback to Offscreen documents
+    if (typeof chrome !== "undefined" && chrome.offscreen) {
+      const hasOffscreen = await chrome.offscreen.hasDocument();
+      if (!hasOffscreen) {
+        await chrome.offscreen.createDocument({
+          url: "offscreen/offscreen.html",
+          reasons: ["AUDIO_PLAYBACK"],
+          justification: "notification sound",
+        });
+      }
+
+      try {
+        browser.runtime.sendMessage({
+          target: "offscreen",
+          type: "play-audio",
+          src: "/assets/sounds/Portal2_sfx_button_positive.mp3",
+        });
+      } catch (e) {
+        console.error("Failed to play audio:", e);
+      }
+    } else {
+      new Audio("/assets/sounds/Portal2_sfx_button_positive.mp3").play();
+    }
+  }
+
   createBrowserNotification(timerType) {
     let message = "";
 
@@ -36,7 +62,7 @@ export default class Notifications {
 
     this.settings.getSettings().then((settings) => {
       if (settings.isNotificationSoundEnabled) {
-        new Audio("/assets/sounds/Portal2_sfx_button_positive.mp3").play();
+        this.playAudio();
       }
     });
   }
