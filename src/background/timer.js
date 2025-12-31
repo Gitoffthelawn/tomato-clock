@@ -191,7 +191,7 @@ export default class Timer {
   }
 
   setListeners() {
-    browser.runtime.onMessage.addListener((request, sender, sendResponse) => {
+    browser.runtime.onMessage.addListener((request) => {
       switch (request.action) {
         case RUNTIME_ACTION.RESET_TIMER:
           this.resetTimer();

@@ -21,6 +21,7 @@ module.exports = [
         ...globals.browser,
         ...globals.node,
         ...globals.es2015,
+        ...globals.webextensions,
       },
       sourceType: "module",
     },
