@@ -57,6 +57,7 @@ export default class Timer {
   setTimer(type) {
     this.resetTimer().then(() => {
       const badgeBackgroundColor = BADGE_BACKGROUND_COLOR_BY_TIMER_TYPE[type];
+
       this.settings.getSettings().then(async (settings) => {
         const milliseconds = getTimerTypeMilliseconds(type, settings);
         const scheduledTime = Date.now() + milliseconds;
@@ -67,9 +68,25 @@ export default class Timer {
           totalTime: milliseconds,
           type,
         };
-
         await this.setTimerState(state);
-        await browser.alarms.create("timer", { when: scheduledTime });
+        console.log(
+          `Setting timer: ${type} for ${milliseconds}ms. Scheduled at: ${new Date(
+            scheduledTime,
+          ).toISOString()}`,
+        );
+
+        // Create a wake-up alarm 25 seconds before the timer finishes
+        // This wakes up the service worker so we can use setTimeout for better precision
+        const wakeMilliseconds = 25000;
+        if (milliseconds > wakeMilliseconds) {
+          await browser.alarms.create("timer-wake", {
+            when: scheduledTime - wakeMilliseconds,
+          });
+        }
+
+        // Create a fallback alarm in case the wake-up alarm fails
+        await browser.alarms.create("timer-fallback", { when: scheduledTime });
+
         await browser.alarms.create("badge", { periodInMinutes: 1 });
 
         // Initial badge of timer to match the panel minute digits (e.g. "25" badge to "25:00" panel time)
@@ -99,9 +116,6 @@ export default class Timer {
 
     const { minutes, seconds } = getMillisecondsToMinutesAndSeconds(timeLeft);
     const minutesLeft = minutes.toString();
-    console.log(timeLeft);
-    console.log(minutesLeft);
-    console.log(seconds);
 
     // Check if we need to update
     const currentText = await this.badge.getBadgeText();
@@ -117,16 +131,34 @@ export default class Timer {
   initAlarms() {
     browser.alarms.onAlarm.addListener(async (alarm) => {
       switch (alarm.name) {
-        case "timer": {
-          // const delayInSeconds = (Date.now() - alarm.scheduledTime) / 1000;
-          // console.log(`Alarm delay: ${delayInSeconds} seconds`);
-
+        case "timer-wake": {
           const state = await this.getTimerState();
-          if (state.status === "running") {
-            this.notifications.createBrowserNotification(state.type);
-            this.timeline.addAlarmToTimeline(state.type, state.totalTime);
-            await this.resetTimer();
+          if (state.status !== "running") return;
+
+          const delay = state.scheduledTime - Date.now();
+          console.log(
+            `Wake alarm fired. Scheduled: ${state.scheduledTime}. Now: ${Date.now()}. Delaying for: ${delay}ms`,
+          );
+          if (delay > 0) {
+            // Wait for the exact time
+            setTimeout(async () => {
+              // Re-check state just in case it was cancelled/reset during the wait
+              const currentState = await this.getTimerState();
+              if (
+                currentState.status === "running" &&
+                currentState.scheduledTime === state.scheduledTime
+              ) {
+                await this.handleTimerExpiration("timer-wake");
+              }
+            }, delay);
+          } else {
+            // Currently past the time, expire immediately
+            await this.handleTimerExpiration("timer-wake");
           }
+          break;
+        }
+        case "timer-fallback": {
+          await this.handleTimerExpiration("timer-fallback");
           break;
         }
         case "badge":
@@ -137,6 +169,20 @@ export default class Timer {
           break;
       }
     });
+  }
+
+  async handleTimerExpiration(source) {
+    const state = await this.getTimerState();
+    if (state.status === "running") {
+      const delay = Date.now() - state.scheduledTime;
+      console.log(
+        `Timer expired at ${new Date().toISOString()}. Source: ${source}. Delay: ${delay}ms`,
+      );
+
+      this.notifications.createBrowserNotification(state.type);
+      this.timeline.addAlarmToTimeline(state.type, state.totalTime);
+      await this.resetTimer();
+    }
   }
 
   async getTimerScheduledTime() {
