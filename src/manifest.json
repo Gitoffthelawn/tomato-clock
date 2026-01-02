@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "Tomato Clock",
+  "name": "Tomato Clock - A Simple Pomodoro Timer",
   "version": "__REPLACED_BY_WEBPACK__",
   "author": "Samuel Jun",
   "description": "A simple browser extension for managing your productivity.",
