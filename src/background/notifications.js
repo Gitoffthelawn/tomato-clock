@@ -53,7 +53,7 @@ export default class Notifications {
         break;
     }
 
-    browser.notifications.create(NOTIFICATION_ID, {
+    browser.notifications.create("", {
       type: "basic",
       iconUrl: "/assets/images/tomato-icon-64.png",
       title: "Tomato Clock",
@@ -79,9 +79,7 @@ export default class Notifications {
 
   setListeners() {
     browser.notifications.onClicked.addListener((notificationId) => {
-      if (notificationId === NOTIFICATION_ID) {
-        browser.notifications.clear(notificationId);
-      }
+      browser.notifications.clear(notificationId);
     });
   }
 }
