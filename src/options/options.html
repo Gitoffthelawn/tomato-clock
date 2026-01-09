@@ -78,5 +78,43 @@
         Reset to default
       </button>
     </div>
+
+    <!-- Reset Confirmation Modal -->
+    <div
+      class="modal fade"
+      id="reset-confirmation-modal"
+      tabindex="-1"
+      aria-labelledby="resetModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="resetModalLabel">Confirm Reset</h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            Are you sure you want to reset all settings to default?
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Cancel
+            </button>
+            <button type="button" class="btn btn-danger" id="confirm-reset">
+              Reset
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
   </body>
 </html>

@@ -1,3 +1,4 @@
+import Modal from "bootstrap/js/dist/modal";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./options.css";
 
@@ -106,15 +107,17 @@ export default class Options {
       });
     });
 
+    const modalElement = document.getElementById("reset-confirmation-modal");
+    const resetModal = new Modal(modalElement);
+
     document.getElementById("reset-options").addEventListener("click", () => {
-      const shouldReset = confirm(
-        "Are you sure you want to reset all settings to default?",
-      );
-      if (!shouldReset) {
-        return;
-      }
+      resetModal.show();
+    });
+
+    document.getElementById("confirm-reset").addEventListener("click", () => {
       this.settings.resetSettings().then(() => {
         this.setOptionsOnPage();
+        resetModal.hide();
       });
     });
   }
