@@ -2,7 +2,11 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "./options.css";
 
 import Settings from "../utils/settings";
-import { SETTINGS_KEY } from "../utils/constants";
+import {
+  AVAILABLE_NOTIFICATION_SOUNDS,
+  DEFAULT_SETTINGS,
+  SETTINGS_KEY,
+} from "../utils/constants";
 
 export default class Options {
   constructor() {
@@ -18,12 +22,25 @@ export default class Options {
     this.domNotificationSoundCheckbox = document.getElementById(
       "notification-sound-checkbox",
     );
+    this.domNotificationSoundSelect = document.getElementById(
+      "notification-sound-select",
+    );
     this.domToolbarBadgeCheckbox = document.getElementById(
       "toolbar-badge-checkbox",
     );
 
     this.setOptionsOnPage();
     this.setEventListeners();
+    this.populateSoundSelect();
+  }
+
+  populateSoundSelect() {
+    AVAILABLE_NOTIFICATION_SOUNDS.forEach((sound) => {
+      const option = document.createElement("option");
+      option.value = sound.id;
+      option.textContent = sound.name;
+      this.domNotificationSoundSelect.appendChild(option);
+    });
   }
 
   setOptionsOnPage() {
@@ -33,6 +50,7 @@ export default class Options {
         minutesInShortBreak,
         minutesInLongBreak,
         isNotificationSoundEnabled,
+        selectedNotificationSound,
         isToolbarBadgeEnabled,
       } = settings;
 
@@ -40,6 +58,10 @@ export default class Options {
       this.domMinutesInShortBreak.value = minutesInShortBreak;
       this.domMinutesInLongBreak.value = minutesInLongBreak;
       this.domNotificationSoundCheckbox.checked = isNotificationSoundEnabled;
+      this.domNotificationSoundSelect.value =
+        selectedNotificationSound ||
+        DEFAULT_SETTINGS[SETTINGS_KEY.SELECTED_NOTIFICATION_SOUND];
+      this.domNotificationSoundSelect.disabled = !isNotificationSoundEnabled;
       this.domToolbarBadgeCheckbox.checked = isToolbarBadgeEnabled;
     });
   }
@@ -50,6 +72,7 @@ export default class Options {
     const minutesInLongBreak = parseInt(this.domMinutesInLongBreak.value);
     const isNotificationSoundEnabled =
       this.domNotificationSoundCheckbox.checked;
+    const selectedNotificationSound = this.domNotificationSoundSelect.value;
     const isToolbarBadgeEnabled = this.domToolbarBadgeCheckbox.checked;
 
     this.settings.saveSettings({
@@ -57,6 +80,7 @@ export default class Options {
       [SETTINGS_KEY.MINUTES_IN_SHORT_BREAK]: minutesInShortBreak,
       [SETTINGS_KEY.MINUTES_IN_LONG_BREAK]: minutesInLongBreak,
       [SETTINGS_KEY.IS_NOTIFICATION_SOUND_ENABLED]: isNotificationSoundEnabled,
+      [SETTINGS_KEY.SELECTED_NOTIFICATION_SOUND]: selectedNotificationSound,
       [SETTINGS_KEY.IS_TOOLBAR_BADGE_ENABLED]: isToolbarBadgeEnabled,
     });
   }
@@ -71,6 +95,10 @@ export default class Options {
       this.settings.resetSettings().then(() => {
         this.setOptionsOnPage();
       });
+    });
+
+    this.domNotificationSoundCheckbox.addEventListener("change", (e) => {
+      this.domNotificationSoundSelect.disabled = !e.target.checked;
     });
   }
 }

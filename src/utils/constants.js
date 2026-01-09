@@ -11,6 +11,7 @@ export const SETTINGS_KEY = {
   MINUTES_IN_SHORT_BREAK: "minutesInShortBreak",
   MINUTES_IN_LONG_BREAK: "minutesInLongBreak",
   IS_NOTIFICATION_SOUND_ENABLED: "isNotificationSoundEnabled",
+  SELECTED_NOTIFICATION_SOUND: "selectedNotificationSound",
   IS_TOOLBAR_BADGE_ENABLED: "isToolbarBadgeEnabled",
 };
 
@@ -20,7 +21,17 @@ export const DEFAULT_SETTINGS = {
   [SETTINGS_KEY.MINUTES_IN_LONG_BREAK]: 15,
   [SETTINGS_KEY.IS_NOTIFICATION_SOUND_ENABLED]: false,
   [SETTINGS_KEY.IS_TOOLBAR_BADGE_ENABLED]: true,
+  [SETTINGS_KEY.SELECTED_NOTIFICATION_SOUND]: "timer-chime.mp3",
 };
+
+export const AVAILABLE_NOTIFICATION_SOUNDS = [
+  { id: "alarm-beep-loud.mp3", name: "Alarm Beep Loud" },
+  { id: "alarm-beep.mp3", name: "Alarm Beep" },
+  { id: "beep-beep.mp3", name: "Beep Beep" },
+  { id: "kitchen-timer.mp3", name: "Kitchen Timer" },
+  { id: "button.mp3", name: "Button" },
+  { id: "timer-chime.mp3", name: "Timer Chime" },
+];
 
 export const TIMER_TYPE = {
   TOMATO: "tomato",

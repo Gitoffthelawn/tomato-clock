@@ -11,6 +11,10 @@ export default class Notifications {
 
   async playAudio() {
     // Chrome restricts audio playback to Offscreen documents
+    const { selectedNotificationSound } = await this.settings.getSettings();
+    const soundFile = selectedNotificationSound || "timer-chime.mp3";
+    const audioPath = `/assets/sounds/${soundFile}`;
+
     if (typeof chrome !== "undefined" && chrome.offscreen) {
       const hasOffscreen = await chrome.offscreen.hasDocument();
       if (!hasOffscreen) {
@@ -25,13 +29,13 @@ export default class Notifications {
         browser.runtime.sendMessage({
           target: "offscreen",
           type: "play-audio",
-          src: "/assets/sounds/Portal2_sfx_button_positive.mp3",
+          src: audioPath,
         });
       } catch (e) {
         console.error("Failed to play audio:", e);
       }
     } else {
-      new Audio("/assets/sounds/Portal2_sfx_button_positive.mp3").play();
+      new Audio(audioPath).play();
     }
   }
 
