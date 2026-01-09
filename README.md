@@ -8,11 +8,10 @@ Features:
 
 - Customizable timer lengths
 - Browser notifications
+- Customizable notification sounds
 - Stat tracking
 
-You can customize the length of the Tomatoes and breaks in the extension page. The extension uses the default browser notification system, accompanied by a sound, to let you know when the timer is over. The extension also features stats for tracking how many Tomatoes you complete. Your stats are synced across devices using the browser's cloud storage support.
-
-Due to a trademark complaint, the extension was renamed from Pomodoro Clock to Tomato Clock.
+You can customize the length of the Tomatoes and breaks in the extension page. The extension uses the default browser notification system, accompanied by a notification sound, to let you know when the timer is over. The extension also features stats for tracking how many Tomatoes you complete. Your stats are synced across devices using the browser's cloud storage support.
 
 Please file any issues or feature requests at https://github.com/samueljun/tomato-clock/issues.
 
@@ -23,6 +22,8 @@ Please file any issues or feature requests at https://github.com/samueljun/tomat
 
 ## Development
 
+### Setup
+
 1. [Install node.js and npm](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm).
 
 2. Install the required node modules:
@@ -31,32 +32,23 @@ Please file any issues or feature requests at https://github.com/samueljun/tomat
 npm install
 ```
 
-3. Run the following command so that webpack can watch and recompile the `/src` files live to the `/dist` folder:
+3. Run one of the following commands so that webpack can watch and recompile the `/src` files live to the `/dist` folder (NOTE: Default target is Firefox):
 
 ```sh
 npm run watch
+npm run watch:firefox
+
+npm run watch:chrome
 ```
 
-### Firefox
-
-To run the extension with live reloading in a clean Firefox instance, run the following command in a separate terminal:
+4. In a separate terminal, run the following command to start a clean clean browser instance with live reloading (https://github.com/mozilla/web-ext):
 
 ```sh
-npm run watch-firefox
+npm run start
+npm run start:firefox
+
+npm run start:chrome
 ```
-
-To temporarily load the extension in a normal Firefox instance:
-
-1. Go to `about:debugging`
-2. Click `Load Temporary Add-on`
-3. Load the `src` folder
-
-### Chromium
-
-1. Go to `chrome://extensions/`
-2. Enable developer mode
-3. Click `Load unpacked extension...`
-4. Load the `/dist` folder
 
 ### Updating the version number
 
@@ -68,13 +60,16 @@ npm version patch && git push && git push --tags
 
 ### Building submission file
 
-Run the following command so that webpack can recompile the `/src` files in production mode to the `/dist` folder:
+Run one of the following commands so that webpack can build the submission zip file into `/dist-zip`:
 
 ```sh
 npm run build
+npm run build:firefox
+
+npm run build:chrome
 ```
 
-## States export json format
+## Stats export json format
 
 The expected formatting of Tomato Clock's .json files is as follows
 
