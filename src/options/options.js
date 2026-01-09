@@ -86,19 +86,36 @@ export default class Options {
   }
 
   setEventListeners() {
-    document.getElementById("options-form").addEventListener("submit", (e) => {
-      e.preventDefault();
-      this.saveOptions();
-    });
+    // Auto-save on change for all inputs
+    const inputs = [
+      this.domMinutesInTomato,
+      this.domMinutesInShortBreak,
+      this.domMinutesInLongBreak,
+      this.domNotificationSoundCheckbox,
+      this.domNotificationSoundSelect,
+      this.domToolbarBadgeCheckbox,
+    ];
 
-    document.getElementById("reset-options").addEventListener("click", () => {
-      this.settings.resetSettings().then(() => {
-        this.setOptionsOnPage();
+    inputs.forEach((input) => {
+      input.addEventListener("change", () => {
+        // Special handling for the checkbox enabling/disabling the select
+        if (input === this.domNotificationSoundCheckbox) {
+          this.domNotificationSoundSelect.disabled = !input.checked;
+        }
+        this.saveOptions();
       });
     });
 
-    this.domNotificationSoundCheckbox.addEventListener("change", (e) => {
-      this.domNotificationSoundSelect.disabled = !e.target.checked;
+    document.getElementById("reset-options").addEventListener("click", () => {
+      const shouldReset = confirm(
+        "Are you sure you want to reset all settings to default?",
+      );
+      if (!shouldReset) {
+        return;
+      }
+      this.settings.resetSettings().then(() => {
+        this.setOptionsOnPage();
+      });
     });
   }
 }
