@@ -16,7 +16,7 @@ You can customize the length of the Tomatoes and breaks in the extension page. T
 
 Please file any issues or feature requests at https://github.com/samueljun/tomato-clock/issues.
 
-[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/G2G71S2I7L)
+<a href="https://www.buymeacoffee.com/samueljun" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" ></a>
 
 ## Installation
 
