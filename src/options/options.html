@@ -57,12 +57,41 @@
           id="notification-sound-select"
           disabled
         ></select>
-        <div id="custom-sound-upload-container" class="mt-2" style="display: none">
-          <label for="custom-sound-upload" class="form-label">
-            Upload custom sound
-          </label>
-          <input class="form-control" type="file" id="custom-sound-upload" accept="audio/*" />
-          <div id="custom-sound-filename" class="form-text"></div>
+
+        <div
+          id="custom-sound-upload-container"
+          class="mt-2"
+          style="display: none"
+        >
+          <!-- Empty State: Just the file input -->
+          <div id="custom-sound-empty-state">
+            <input
+              class="form-control form-control-sm"
+              type="file"
+              id="custom-sound-upload-input"
+              accept="audio/*"
+            />
+          </div>
+
+          <!-- Filled State: Filename + Clear button -->
+          <div id="custom-sound-filled-state" style="display: none">
+            <div class="input-group input-group-sm">
+              <input
+                type="text"
+                class="form-control"
+                id="custom-sound-filename"
+                disabled
+                placeholder="Custom Sound"
+              />
+              <button
+                class="btn btn-outline-secondary"
+                type="button"
+                id="clear-custom-sound-button"
+              >
+                Clear
+              </button>
+            </div>
+          </div>
         </div>
       </div>
 

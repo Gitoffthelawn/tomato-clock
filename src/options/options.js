@@ -34,9 +34,20 @@ export default class Options {
     this.domCustomSoundUploadContainer = document.getElementById(
       "custom-sound-upload-container",
     );
-    this.domCustomSoundUpload = document.getElementById("custom-sound-upload");
+    this.domCustomSoundEmptyState = document.getElementById(
+      "custom-sound-empty-state",
+    );
+    this.domCustomSoundUploadInput = document.getElementById(
+      "custom-sound-upload-input",
+    );
+    this.domCustomSoundFilledState = document.getElementById(
+      "custom-sound-filled-state",
+    );
     this.domCustomSoundFilename = document.getElementById(
       "custom-sound-filename",
+    );
+    this.domClearCustomSoundButton = document.getElementById(
+      "clear-custom-sound-button",
     );
 
     this.setOptionsOnPage();
@@ -82,7 +93,12 @@ export default class Options {
           .then((result) => {
             const filename = result[STORAGE_KEY.CUSTOM_SOUND_FILENAME];
             if (filename) {
-              this.domCustomSoundFilename.textContent = `Current sound: ${filename}`;
+              this.domCustomSoundFilename.value = filename;
+              this.domCustomSoundEmptyState.style.display = "none";
+              this.domCustomSoundFilledState.style.display = "block";
+            } else {
+              this.domCustomSoundEmptyState.style.display = "block";
+              this.domCustomSoundFilledState.style.display = "none";
             }
           });
       }
@@ -132,8 +148,12 @@ export default class Options {
           const soundFile = this.domNotificationSoundSelect.value;
           if (soundFile === "custom") {
             this.domCustomSoundUploadContainer.style.display = "block";
+
             browser.storage.local
-              .get([STORAGE_KEY.CUSTOM_SOUND, STORAGE_KEY.CUSTOM_SOUND_FILENAME])
+              .get([
+                STORAGE_KEY.CUSTOM_SOUND,
+                STORAGE_KEY.CUSTOM_SOUND_FILENAME,
+              ])
               .then((result) => {
                 const sound = result[STORAGE_KEY.CUSTOM_SOUND];
                 const filename = result[STORAGE_KEY.CUSTOM_SOUND_FILENAME];
@@ -141,13 +161,18 @@ export default class Options {
                   new Audio(sound).play();
                 }
                 if (filename) {
-                  this.domCustomSoundFilename.textContent = `Current sound: ${filename}`;
+                  this.domCustomSoundFilename.value = filename;
+                  this.domCustomSoundEmptyState.style.display = "none";
+                  this.domCustomSoundFilledState.style.display = "block";
                 } else {
-                  this.domCustomSoundFilename.textContent = "";
+                  this.domCustomSoundFilename.value = "";
+                  this.domCustomSoundEmptyState.style.display = "block";
+                  this.domCustomSoundFilledState.style.display = "none";
                 }
               });
           } else {
             this.domCustomSoundUploadContainer.style.display = "none";
+
             if (soundFile) {
               const audioPath = `/assets/sounds/${soundFile}`;
               new Audio(audioPath).play();
@@ -159,7 +184,7 @@ export default class Options {
       });
     });
 
-    this.domCustomSoundUpload.addEventListener("change", (event) => {
+    this.domCustomSoundUploadInput.addEventListener("change", (event) => {
       const file = event.target.files[0];
       if (file) {
         const reader = new FileReader();
@@ -172,11 +197,24 @@ export default class Options {
             })
             .then(() => {
               new Audio(result).play();
-              this.domCustomSoundFilename.textContent = `Current sound: ${file.name}`;
+              this.domCustomSoundFilename.value = file.name;
+              this.domCustomSoundEmptyState.style.display = "none";
+              this.domCustomSoundFilledState.style.display = "block";
             });
         };
         reader.readAsDataURL(file);
       }
+    });
+
+    this.domClearCustomSoundButton.addEventListener("click", () => {
+      browser.storage.local
+        .remove([STORAGE_KEY.CUSTOM_SOUND, STORAGE_KEY.CUSTOM_SOUND_FILENAME])
+        .then(() => {
+          this.domCustomSoundFilename.value = "";
+          this.domCustomSoundUploadInput.value = ""; // Reset file input
+          this.domCustomSoundFilledState.style.display = "none";
+          this.domCustomSoundEmptyState.style.display = "block";
+        });
     });
 
     const modalElement = document.getElementById("reset-confirmation-modal");
@@ -188,8 +226,17 @@ export default class Options {
 
     document.getElementById("confirm-reset").addEventListener("click", () => {
       this.settings.resetSettings().then(() => {
-        this.setOptionsOnPage();
-        resetModal.hide();
+        browser.storage.local
+          .remove([STORAGE_KEY.CUSTOM_SOUND, STORAGE_KEY.CUSTOM_SOUND_FILENAME])
+          .then(() => {
+            this.domCustomSoundFilename.value = "";
+            this.domCustomSoundUploadInput.value = "";
+            this.domCustomSoundFilledState.style.display = "none";
+            this.domCustomSoundEmptyState.style.display = "block";
+
+            this.setOptionsOnPage();
+            resetModal.hide();
+          });
       });
     });
   }
