@@ -151,11 +151,11 @@ export default class Options {
 
             browser.storage.local
               .get([
-                STORAGE_KEY.CUSTOM_SOUND,
+                STORAGE_KEY.CUSTOM_SOUND_FILE,
                 STORAGE_KEY.CUSTOM_SOUND_FILENAME,
               ])
               .then((result) => {
-                const sound = result[STORAGE_KEY.CUSTOM_SOUND];
+                const sound = result[STORAGE_KEY.CUSTOM_SOUND_FILE];
                 const filename = result[STORAGE_KEY.CUSTOM_SOUND_FILENAME];
                 if (sound) {
                   new Audio(sound).play();
@@ -192,7 +192,7 @@ export default class Options {
           const result = e.target.result;
           browser.storage.local
             .set({
-              [STORAGE_KEY.CUSTOM_SOUND]: result,
+              [STORAGE_KEY.CUSTOM_SOUND_FILE]: result,
               [STORAGE_KEY.CUSTOM_SOUND_FILENAME]: file.name,
             })
             .then(() => {
@@ -208,7 +208,10 @@ export default class Options {
 
     this.domClearCustomSoundButton.addEventListener("click", () => {
       browser.storage.local
-        .remove([STORAGE_KEY.CUSTOM_SOUND, STORAGE_KEY.CUSTOM_SOUND_FILENAME])
+        .remove([
+          STORAGE_KEY.CUSTOM_SOUND_FILE,
+          STORAGE_KEY.CUSTOM_SOUND_FILENAME,
+        ])
         .then(() => {
           this.domCustomSoundFilename.value = "";
           this.domCustomSoundUploadInput.value = ""; // Reset file input
@@ -227,7 +230,10 @@ export default class Options {
     document.getElementById("confirm-reset").addEventListener("click", () => {
       this.settings.resetSettings().then(() => {
         browser.storage.local
-          .remove([STORAGE_KEY.CUSTOM_SOUND, STORAGE_KEY.CUSTOM_SOUND_FILENAME])
+          .remove([
+            STORAGE_KEY.CUSTOM_SOUND_FILE,
+            STORAGE_KEY.CUSTOM_SOUND_FILENAME,
+          ])
           .then(() => {
             this.domCustomSoundFilename.value = "";
             this.domCustomSoundUploadInput.value = "";

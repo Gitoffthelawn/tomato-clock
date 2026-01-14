@@ -4,7 +4,7 @@ export const STORAGE_KEY = {
   TIMELINE: "timeline",
   SETTINGS: "settings",
   TIMER: "timer",
-  CUSTOM_SOUND: "customSound",
+  CUSTOM_SOUND_FILE: "customSoundFile",
   CUSTOM_SOUND_FILENAME: "customSoundFilename",
 };
 

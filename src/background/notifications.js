@@ -1,9 +1,6 @@
 import browser from "webextension-polyfill";
 
-import {
-  STORAGE_KEY,
-  TIMER_TYPE,
-} from "../utils/constants";
+import { STORAGE_KEY, TIMER_TYPE } from "../utils/constants";
 
 export default class Notifications {
   constructor(settings) {
@@ -19,9 +16,12 @@ export default class Notifications {
     let audioPath;
 
     if (soundFile === "custom") {
-      const stored = await browser.storage.local.get(STORAGE_KEY.CUSTOM_SOUND);
+      const stored = await browser.storage.local.get(
+        STORAGE_KEY.CUSTOM_SOUND_FILE,
+      );
       audioPath =
-        stored[STORAGE_KEY.CUSTOM_SOUND] || "/assets/sounds/timer-chime.mp3";
+        stored[STORAGE_KEY.CUSTOM_SOUND_FILE] ||
+        "/assets/sounds/timer-chime.mp3";
     } else {
       audioPath = `/assets/sounds/${soundFile}`;
     }
