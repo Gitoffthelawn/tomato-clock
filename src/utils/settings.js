@@ -4,6 +4,9 @@ import { DEFAULT_SETTINGS, STORAGE_KEY } from "./constants";
 
 export default class Settings {
   constructor() {
+    // Sync storage limits (approximately 100 KB, 8 KB per item)
+    // Firefox: https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/storage/sync
+    // Chrome: https://developer.chrome.com/docs/extensions/reference/storage/#sync
     this.storage = browser.storage.sync || browser.storage.local;
   }
 
