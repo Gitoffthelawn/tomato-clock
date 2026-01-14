@@ -10,22 +10,26 @@ export default class Notifications {
   }
 
   async playAudio() {
-    // Chrome restricts audio playback to Offscreen documents
-    const { selectedNotificationSound } = await this.settings.getSettings();
-    const soundFile = selectedNotificationSound || "timer-chime.mp3";
+    const settings = await this.settings.getSettings();
+    const selectedNotificationSound =
+      settings.selectedNotificationSound || "timer-chime.mp3";
     let audioPath;
 
-    if (soundFile === "custom") {
+    if (selectedNotificationSound === "custom") {
       const stored = await browser.storage.local.get(
         STORAGE_KEY.CUSTOM_SOUND_FILE,
       );
-      audioPath =
-        stored[STORAGE_KEY.CUSTOM_SOUND_FILE] ||
-        "/assets/sounds/timer-chime.mp3";
+      audioPath = stored[STORAGE_KEY.CUSTOM_SOUND_FILE] || "";
     } else {
-      audioPath = `/assets/sounds/${soundFile}`;
+      audioPath = `/assets/sounds/${selectedNotificationSound}`;
     }
 
+    if (!audioPath) {
+      console.log("Audio path not found");
+      return;
+    }
+
+    // Chrome restricts audio playback to Offscreen documents
     if (typeof chrome !== "undefined" && chrome.offscreen) {
       const hasOffscreen = await chrome.offscreen.hasDocument();
       if (!hasOffscreen) {
