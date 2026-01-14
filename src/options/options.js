@@ -103,6 +103,15 @@ export default class Options {
         if (input === this.domNotificationSoundCheckbox) {
           this.domNotificationSoundSelect.disabled = !input.checked;
         }
+
+        if (input === this.domNotificationSoundSelect) {
+          const soundFile = this.domNotificationSoundSelect.value;
+          if (soundFile) {
+            const audioPath = `/assets/sounds/${soundFile}`;
+            new Audio(audioPath).play();
+          }
+        }
+
         this.saveOptions();
       });
     });
