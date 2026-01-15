@@ -15,7 +15,8 @@
     "start:firefox": "npm run start",
     "build:chrome": "TARGET_BROWSER=chrome npm run build",
     "watch:chrome": "TARGET_BROWSER=chrome webpack --watch",
-    "start:chrome": "web-ext run -t chromium --source-dir ./dist"
+    "start:chrome": "web-ext run -t chromium --source-dir ./dist",
+    "prepare": "husky"
   },
   "repository": {
     "type": "git",
@@ -51,6 +52,8 @@
     "eslint": "^9.39.1",
     "globals": "^16.5.0",
     "html-webpack-plugin": "^5.5.3",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.2.7",
     "prettier": "3.7.4",
     "style-loader": "^4.0.0",
     "web-ext": "^9.2.0",
@@ -62,5 +65,8 @@
   },
   "browserslist": [
     "defaults"
-  ]
+  ],
+  "lint-staged": {
+    "**/*": "prettier --write --ignore-unknown"
+  }
 }
