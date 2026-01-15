@@ -1,5 +1,5 @@
 import $ from "jquery";
-import Chart from "chart.js";
+import Chart from "chart.js/auto";
 import moment from "moment";
 import "daterangepicker";
 
@@ -12,6 +12,7 @@ import {
   getDateLabel,
   getDateRangeStringArray,
   getZeroArray,
+  getFilenameDate,
 } from "../utils/utils";
 import { DATE_UNIT, TIMER_TYPE } from "../utils/constants";
 
@@ -23,25 +24,39 @@ export default class Stats {
     this.longBreaksCount = document.getElementById("long-breaks-count");
     this.resetStatsButton = document.getElementById("reset-stats-button");
     this.exportStatsButton = document.getElementById("export-stats-button");
+    this.importStatsButton = document.getElementById("import-stats-button");
+    this.importStatsHiddenInput = document.getElementById(
+      "import-stats-hidden-input",
+    );
 
     this.ctx = document
       .getElementById("completed-tomato-dates-chart")
       .getContext("2d");
     this.completedTomatoesChart = null;
 
-    this.handleResetStatsButtonClick = this.handleResetStatsButtonClick.bind(
-      this
-    );
-    this.handleExportStatsButtonClick = this.handleExportStatsButtonClick.bind(
-      this
-    );
+    this.handleResetStatsButtonClick =
+      this.handleResetStatsButtonClick.bind(this);
+    this.handleExportStatsButtonClick =
+      this.handleExportStatsButtonClick.bind(this);
+    this.handleImportStatsButtonClick =
+      this.handleImportStatsButtonClick.bind(this);
+    this.handleImportStatsHiddenInputChange =
+      this.handleImportStatsHiddenInputChange.bind(this);
     this.resetStatsButton.addEventListener(
       "click",
-      this.handleResetStatsButtonClick
+      this.handleResetStatsButtonClick,
     );
     this.exportStatsButton.addEventListener(
       "click",
-      this.handleExportStatsButtonClick
+      this.handleExportStatsButtonClick,
+    );
+    this.importStatsButton.addEventListener(
+      "click",
+      this.handleImportStatsButtonClick,
+    );
+    this.importStatsHiddenInput.addEventListener(
+      "change",
+      this.handleImportStatsHiddenInputChange,
     );
 
     this.timeline = new Timeline();
@@ -58,14 +73,37 @@ export default class Stats {
 
   handleExportStatsButtonClick() {
     this.timeline.getTimeline().then((timeline) => {
+      const filename = `${getFilenameDate()}_tomato-clock-stats.json`;
+
       const dataStr =
         "data:text/json;charset=utf-8," +
         encodeURIComponent(JSON.stringify(timeline));
       const dlAnchorElem = document.getElementById("downloadAnchorElem");
       dlAnchorElem.setAttribute("href", dataStr);
-      dlAnchorElem.setAttribute("download", "tomato-clock-stats.json");
+      dlAnchorElem.setAttribute("download", filename);
       dlAnchorElem.click();
     });
+  }
+
+  handleImportStatsButtonClick() {
+    this.importStatsHiddenInput.click();
+  }
+
+  async handleImportStatsHiddenInputChange(e) {
+    const [file] = e.target.files;
+    const timelineJson = await file.text();
+
+    let newTimeline;
+
+    try {
+      newTimeline = JSON.parse(timelineJson);
+    } catch {
+      alert("Invalid JSON");
+      return;
+    }
+
+    await this.timeline.setTimeline(newTimeline);
+    window.location.reload();
   }
 
   resetDateRange() {
@@ -93,12 +131,12 @@ export default class Stats {
   async changeStatDates(startDate, endDate, dateUnit) {
     const filteredTimeline = await this.timeline.getFilteredTimeline(
       startDate,
-      endDate
+      endDate,
     );
     const dateRangeStrings = getDateRangeStringArray(
       startDate,
       endDate,
-      dateUnit
+      dateUnit,
     );
 
     const completedTomatoesChartData = {
@@ -130,7 +168,7 @@ export default class Stats {
           this.addTomatoDateToChartData(
             completedTomatoesChartData,
             timelineAlarm.date,
-            dateUnit
+            dateUnit,
           );
           break;
         case TIMER_TYPE.SHORT_BREAK:
@@ -148,30 +186,30 @@ export default class Stats {
 
     // Setup 'Completed Tomatoes' Line Chart
     if (this.completedTomatoesChart) {
-      this.completedTomatoesChart.config.data = completedTomatoesChartData;
+      this.completedTomatoesChart.data = completedTomatoesChartData;
       this.completedTomatoesChart.update();
     } else {
       this.completedTomatoesChart = new Chart(this.ctx, {
         type: "line",
         data: completedTomatoesChartData,
         options: {
-          tooltips: {
-            intersect: false,
-            mode: "nearest",
+          plugins: {
+            tooltip: {
+              intersect: false,
+              mode: "nearest",
+            },
+            legend: {
+              position: "bottom",
+            },
           },
           scales: {
-            yAxes: [
-              {
-                ticks: {
-                  maxTicksLimit: 5,
-                  suggestedMax: 5,
-                  beginAtZero: true,
-                },
+            y: {
+              beginAtZero: true,
+              suggestedMax: 5,
+              ticks: {
+                maxTicksLimit: 5,
               },
-            ],
-          },
-          legend: {
-            position: "bottom",
+            },
           },
         },
       });
@@ -180,7 +218,6 @@ export default class Stats {
 }
 
 $(document).ready(() => {
-  Chart.defaults.global.responsive = true;
   const stats = new Stats();
 
   // Date Picker
@@ -226,6 +263,6 @@ $(document).ready(() => {
       const dateUnit = isRangeYear ? DATE_UNIT.MONTH : DATE_UNIT.DAY;
 
       stats.changeStatDates(startDate, endDate, dateUnit);
-    }
+    },
   );
 });

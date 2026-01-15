@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="utf-8" />
@@ -19,8 +19,8 @@
 
       <hr />
 
-      <div class="form-group">
-        <label for="date-range-picker">Date Range</label>
+      <div class="mb-3">
+        <label for="date-range-picker" class="form-label">Date Range</label>
         <input
           class="form-control"
           id="date-range-picker"
@@ -68,10 +68,21 @@
       <button class="btn btn-primary" id="export-stats-button">
         Export Stats as JSON
       </button>
+      <a id="downloadAnchorElem" style="display: none"></a>
+
+      <button class="btn btn-secondary" id="import-stats-button">
+        Import Stats from JSON
+      </button>
+      <input
+        hidden
+        type="file"
+        accept="application/json"
+        id="import-stats-hidden-input"
+      />
+
       <button class="btn btn-warning" id="reset-stats-button">
         Reset Stats
       </button>
-      <a id="downloadAnchorElem" style="display: none;"></a>
     </div>
   </body>
 </html>

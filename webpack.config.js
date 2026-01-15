@@ -1,7 +1,9 @@
 const path = require("path");
-const CleanWebpackPlugin = require("clean-webpack-plugin");
+
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
+
+const { version } = require("./package.json");
 
 module.exports = {
   mode: "development",
@@ -10,10 +12,12 @@ module.exports = {
     panel: "./src/panel/panel.js",
     stats: "./src/stats/stats.js",
     options: "./src/options/options.js",
+    offscreen: "./src/offscreen/offscreen.js",
   },
   output: {
     path: path.resolve(__dirname, "dist"),
     filename: "[name]/[name].js",
+    clean: true,
   },
   devtool: "source-map",
   module: {
@@ -43,7 +47,6 @@ module.exports = {
     ],
   },
   plugins: [
-    new CleanWebpackPlugin(["dist"]),
     new HtmlWebpackPlugin({
       title: "Panel - Tomato Clock",
       template: "src/panel/panel.html",
@@ -62,10 +65,51 @@ module.exports = {
       filename: "options/options.html",
       chunks: ["options"],
     }),
+    new HtmlWebpackPlugin({
+      title: "Offscreen - Tomato Clock",
+      template: "src/offscreen/offscreen.html",
+      filename: "offscreen/offscreen.html",
+      chunks: ["offscreen"],
+    }),
 
-    new CopyWebpackPlugin([
-      { from: "./src/manifest.json", to: "./manifest.json" },
-      { from: "./src/assets", to: "./assets" },
-    ]),
+    new CopyWebpackPlugin({
+      patterns: [
+        {
+          from: "./src/manifest.json",
+          to: "./manifest.json",
+          transform: (content) => {
+            const jsonContent = JSON.parse(content.toString());
+            jsonContent.version = version;
+
+            const permissions = ["notifications", "storage", "alarms"];
+
+            switch (process.env.TARGET_BROWSER) {
+              case "chrome":
+                jsonContent.background = {
+                  service_worker: "background/background.js",
+                };
+                jsonContent.permissions = [...permissions, "offscreen"];
+                break;
+              default:
+                // Default is Firefox
+                jsonContent.background = {
+                  scripts: ["background/background.js"],
+                };
+                jsonContent.browser_specific_settings = {
+                  gecko: {
+                    id: "jid1-Kt2kYYgi32zPuw@jetpack",
+                    strict_min_version: "109.0",
+                  },
+                };
+                jsonContent.permissions = permissions;
+                break;
+            }
+
+            return JSON.stringify(jsonContent, null, 2);
+          },
+        },
+        { from: "./src/assets", to: "./assets" },
+      ],
+    }),
   ],
 };

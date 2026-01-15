@@ -1,4 +1,6 @@
 import { DATE_UNIT, MONTH_NAMES, TIMER_TYPE } from "./constants";
+import uniqWith from "lodash/uniqWith";
+import isEqual from "lodash/isEqual";
 
 export function getSecondsInMilliseconds(seconds) {
   return seconds * 1000;
@@ -9,13 +11,13 @@ export function getMinutesInMilliseconds(minutes) {
 
 export function getMillisecondsToMinutesAndSeconds(milliseconds) {
   return {
-    minutes: parseInt((milliseconds / (1000 * 60)) % 60),
+    minutes: parseInt(milliseconds / (1000 * 60)),
     seconds: parseInt((milliseconds / 1000) % 60),
   };
 }
 
 export function getMillisecondsToTimeText(milliseconds) {
-  const minutes = parseInt((milliseconds / (1000 * 60)) % 60);
+  const minutes = parseInt(milliseconds / (1000 * 60));
   const seconds = parseInt((milliseconds / 1000) % 60);
   const minutesString = minutes < 10 ? `0${minutes}` : minutes.toString();
   const secondsString = seconds < 10 ? `0${seconds}` : seconds.toString();
@@ -79,4 +81,34 @@ export function getTimerTypeMilliseconds(type, settings) {
     default:
       return;
   }
+}
+
+export function pad(number) {
+  if (number < 10) {
+    return "0" + number;
+  }
+  return number;
+}
+
+export function getFilenameDate() {
+  const date = new Date();
+  return (
+    date.getFullYear() +
+    "-" +
+    pad(date.getMonth() + 1) +
+    "-" +
+    pad(date.getDate()) +
+    "_" +
+    pad(date.getHours()) +
+    "-" +
+    pad(date.getMinutes()) +
+    "-" +
+    pad(date.getSeconds())
+  );
+}
+
+export function getMergedAndDedupedArray(a, b) {
+  const mergedArrays = a.concat(b);
+
+  return uniqWith(mergedArrays, isEqual);
 }
