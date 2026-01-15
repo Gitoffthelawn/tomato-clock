@@ -30,8 +30,8 @@ export const AVAILABLE_NOTIFICATION_SOUNDS = [
   { id: "alarm-beep-loud.mp3", name: "Alarm Beep Loud" },
   { id: "alarm-beep.mp3", name: "Alarm Beep" },
   { id: "beep-beep.mp3", name: "Beep Beep" },
-  { id: "kitchen-timer.mp3", name: "Kitchen Timer" },
   { id: "button.mp3", name: "Button" },
+  { id: "kitchen-timer.mp3", name: "Kitchen Timer" },
   { id: "timer-chime.mp3", name: "Timer Chime" },
   { id: "custom", name: "Custom" },
 ];
