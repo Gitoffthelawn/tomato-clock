@@ -1,27 +1,27 @@
 {
   "extName": {
-    "message": "Tomato Clock"
+    "message": "Tomato Clock - Um Temporizador Pomodoro Simples"
   },
   "extDescription": {
-    "message": "Uma extensão simples para gerenciar sua produtividade."
+    "message": "Uma simples extensão de navegador para gerir a sua produtividade."
   },
   "actionDefaultTitle": {
     "message": "Tomato Clock"
   },
   "cmd_start_tomato_description": {
-    "message": "Iniciar um novo timer"
+    "message": "Iniciar um novo temporizador pomodoro."
   },
   "cmd_start_short_break_description": {
-    "message": "Iniciar um intervalo curto"
+    "message": "Iniciar uma pausa curta."
   },
   "cmd_start_long_break_description": {
-    "message": "Iniciar um intervalo longo"
+    "message": "Iniciar uma pausa longa."
   },
   "cmd_reset_timer_description": {
-    "message": "Reiniciar o timer atual"
+    "message": "Repor o temporizador atual."
   },
   "confirmResetStats": {
-    "message": "Tem certeza de que deseja redefinir suas estatísticas?"
+    "message": "Tem a certeza que deseja repor as suas estatísticas?"
   },
   "invalidJSON": {
     "message": "JSON inválido"
@@ -69,10 +69,10 @@
     "message": "Botão"
   },
   "sound_kitchen_timer_mp3": {
-    "message": "Timer de Cozinha"
+    "message": "Temporizador de Cozinha"
   },
   "sound_timer_chime_mp3": {
-    "message": "Toque do Timer"
+    "message": "Toque do Temporizador"
   },
   "sound_custom": {
     "message": "Personalizado"
@@ -84,13 +84,13 @@
     "message": "Tomate"
   },
   "btn_short_break": {
-    "message": "Intervalo Curto"
+    "message": "Pausa Curta"
   },
   "btn_long_break": {
-    "message": "Intervalo Longo"
+    "message": "Pausa Longa"
   },
   "btn_reset": {
-    "message": "Reiniciar"
+    "message": "Repor"
   },
   "label_stats": {
     "message": "Estatísticas"
@@ -99,13 +99,13 @@
     "message": "Opções - Tomato Clock"
   },
   "label_minutes_in_tomato": {
-    "message": "Minutos no Tomate"
+    "message": "Minutos por Tomate"
   },
   "label_minutes_in_short_break": {
-    "message": "Minutos no Intervalo Curto"
+    "message": "Minutos por Pausa Curta"
   },
   "label_minutes_in_long_break": {
-    "message": "Minutos no Intervalo Longo"
+    "message": "Minutos por Pausa Longa"
   },
   "label_notification_sound": {
     "message": "Som de notificação"
@@ -117,10 +117,10 @@
     "message": "Limpar"
   },
   "label_toolbar_minute_display": {
-    "message": "Exibir minutos na barra"
+    "message": "Mostrar minutos na barra de ferramentas"
   },
   "label_week_starts_on": {
-    "message": "A semana começa em"
+    "message": "Início da semanao"
   },
   "label_sunday": {
     "message": "Domingo"
@@ -129,19 +129,19 @@
     "message": "Segunda-feira"
   },
   "btn_reset_to_default": {
-    "message": "Redefinir para padrão"
+    "message": "Repor para o padrão"
   },
   "modal_confirm_reset_title": {
-    "message": "Confirmar Redefinição"
+    "message": "Confirmar Reposição"
   },
   "modal_confirm_reset_body": {
-    "message": "Tem certeza de que deseja redefinir todas as configurações para o padrão?"
+    "message": "Tem a certeza que deseja repor todas as configurações para o padrão?"
   },
   "btn_cancel": {
     "message": "Cancelar"
   },
   "btn_reset_confirm": {
-    "message": "Redefinir"
+    "message": "Repor"
   },
   "statsTitle": {
     "message": "Estatísticas - Tomato Clock"
@@ -162,19 +162,19 @@
     "message": "Tomates"
   },
   "label_short_breaks": {
-    "message": "Intervalos Curtos"
+    "message": "Pausas Curtas"
   },
   "label_long_breaks": {
-    "message": "Intervalos Longos"
+    "message": "Pausas Longas"
   },
   "btn_export_stats": {
-    "message": "Exportar estatísticas como JSON"
+    "message": "Exportar Estatísticas como JSON"
   },
   "btn_import_stats": {
-    "message": "Importar estatísticas de JSON"
+    "message": "Importar Estatísticas de JSON"
   },
   "btn_reset_stats": {
-    "message": "Redefinir estatísticas"
+    "message": "Repor Estatísticas"
   },
   "offscreenTitle": {
     "message": "Offscreen"
